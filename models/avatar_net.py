@@ -158,6 +158,7 @@ class AvatarNet(object):
     def build_train_graph(self, inputs):
         """build the training graph for the training of the hierarchical autoencoder"""
         outputs = self.hierarchical_autoencoder(inputs, reuse=False)
+        #outputs = self.hierarchical_autoencoder(inputs, reuse=True)
         outputs = preprocessing.batch_mean_image_subtraction(outputs)
 
         # summaries

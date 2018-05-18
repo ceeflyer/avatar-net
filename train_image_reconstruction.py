@@ -359,22 +359,22 @@ def main(_):
         else:
             moving_average_variables, variable_averages = None, None
 
+        if FLAGS.moving_average_decay:
+            update_ops.append(variable_averages.apply(moving_average_variables))
+
         # gather the optimizer operations
         learning_rate = _configure_learning_rate(
             dataset.num_samples, global_step)
         optimizer = _configure_optimizer(learning_rate)
         summaries.add(tf.summary.scalar('learning_rate', learning_rate))
 
-        if FLAGS.moving_average_decay:
-            update_ops.append(variable_averages.apply(moving_average_variables))
+        # gather the training summaries
+        summaries |= set(model.summaries)
 
         # training operations
         train_op = model.get_training_operations(
             optimizer, global_step, _get_variables_to_train(options))
         update_ops.append(train_op)
-
-        # gather the training summaries
-        summaries |= set(model.summaries)
 
         # gather the update operation
         update_op = tf.group(*update_ops)
